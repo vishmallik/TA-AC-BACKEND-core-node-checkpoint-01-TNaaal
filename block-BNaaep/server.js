@@ -60,6 +60,25 @@ function handleRequest(req, res) {
           });
         }
       );
+    } else if (req.method === "GET" && req.url === "/users") {
+      fs.readdir(__dirname + "/contacts/", (err, files) => {
+        if (err) console.log(err);
+        let html = "";
+
+        for (let file of files) {
+          // fs.readFile(__dirname + "/contacts/" + file, (err, content) => {
+          //   if (err) console.log(err);
+          //   html +=
+          //     `<h1>${JSON.parse(content).name}</h1>` +
+          //     `<h2>${JSON.parse(content).email}</h2>` +
+          //     `<h2>${JSON.parse(content).username}</h2>` +
+          //     `<h2>${JSON.parse(content).age}</h2>` +
+          //     `<h2>${JSON.parse(content).about}</h2>`;
+          //   console.log(html);
+          // });
+          fs.createReadStream(__dirname + "/contacts/" + file).pipe(res);
+        }
+      });
     } else if (req.method === "GET" && parsedUrl.pathname === "/users") {
       let username = parsedUrl.query.username;
       res.setHeader("Content-Type", "text.html");
