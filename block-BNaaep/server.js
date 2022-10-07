@@ -63,21 +63,25 @@ function handleRequest(req, res) {
     } else if (req.method === "GET" && req.url === "/users") {
       fs.readdir(__dirname + "/contacts/", (err, files) => {
         if (err) console.log(err);
-        let html = "";
+        files.forEach((file, index) => {
+          let html = "";
+          fs.readFile(__dirname + "/contacts/" + file, (err, content) => {
+            if (err) console.log(err);
 
-        for (let file of files) {
-          // fs.readFile(__dirname + "/contacts/" + file, (err, content) => {
-          //   if (err) console.log(err);
-          //   html +=
-          //     `<h1>${JSON.parse(content).name}</h1>` +
-          //     `<h2>${JSON.parse(content).email}</h2>` +
-          //     `<h2>${JSON.parse(content).username}</h2>` +
-          //     `<h2>${JSON.parse(content).age}</h2>` +
-          //     `<h2>${JSON.parse(content).about}</h2>`;
-          //   console.log(html);
-          // });
-          fs.createReadStream(__dirname + "/contacts/" + file).pipe(res);
-        }
+            html +=
+              `<h1>${JSON.parse(content).name}</h1>` +
+              `<h2>${JSON.parse(content).email}</h2>` +
+              `<h2>${JSON.parse(content).username}</h2>` +
+              `<h2>${JSON.parse(content).age}</h2>` +
+              `<h2>${JSON.parse(content).about}</h2>`;
+
+            if (index === files.length - 1) {
+              res.end(html);
+            } else {
+              res.write(html);
+            }
+          });
+        });
       });
     } else if (req.method === "GET" && parsedUrl.pathname === "/users") {
       let username = parsedUrl.query.username;
